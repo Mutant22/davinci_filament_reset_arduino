@@ -92,6 +92,7 @@ void setup_io()
 
 #define COMMUNICATION_GPIO   2
 #define delayMicroseconds(x) usleep(x)
+#define delay(x)             usleep(x * 1000)
 #define cli()
 #define sei()
 #define Serial_println(x) printf("%s\n", x)
