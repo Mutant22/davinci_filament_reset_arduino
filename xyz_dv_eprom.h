@@ -97,6 +97,9 @@ void setup_io()
 #define sei()
 #define Serial_println(x) printf("%s\n", x)
 #define digitalWrite(x, y)
+#define boolean (bool)
+#define byte    (unsigned char)
+#define word    (unsigned short)
 //RPI macros and configuration - end
 
 #define NANODE_MAC_DEVICE 0xa0
