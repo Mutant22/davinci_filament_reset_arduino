@@ -98,9 +98,9 @@ void setup_io()
 #define Serial_println(x) printf("%s\n", x)
 #define digitalWrite(x, y)
 
-typedef boolean bool
-typedef byte (unsigned char)
-typedef word (unsigned short)
+typedef boolean bool;
+typedef byte (unsigned char);
+typedef word (unsigned short);
 
 //RPI macros and configuration - end
 
