@@ -23,6 +23,7 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
+
 #ifndef _NANODEUNIO_LIB_H
 #define _NANODEUNIO_LIB_H
 
@@ -86,10 +87,15 @@ void setup_io()
  
    // Always use volatile pointer!
    gpio = (volatile unsigned *)gpio_map;
- 
- 
+   
 } // setup_io
 
+#define COMMUNICATION_GPIO   2
+#define delayMicroseconds(x) usleep(x)
+#define cli()
+#define sei()
+#define Serial_println(x) printf("%s\n", x)
+#define digitalWrite(x, y)
 //RPI macros and configuration - end
 
 #define NANODE_MAC_DEVICE 0xa0
@@ -153,15 +159,15 @@ class NanodeUNIO {
 #define UNIO_THDR    5
 #define UNIO_QUARTER_BIT 10
 #define UNIO_FUDGE_FACTOR 5
-#define UNIO_OUTPUT() do { DDRD |= 0x80; } while (0)
-#define UNIO_INPUT() do { DDRD &= 0x7f; } while (0)
+#define UNIO_OUTPUT() do { OUT_GPIO(COMMUNICATION_GPIO); } while (0)
+#define UNIO_INPUT() do { INP_GPIO(COMMUNICATION_GPIO); } while (0)
 
 static void set_bus(boolean state) {
-  PORTD=(PORTD&0x7f)|(!!state)<<7;
+  SET_GPIO_ALT(COMMUNICATION_GPIO, (!!state));
 }
 
 static boolean read_bus(void) {
-  return !!(PIND&0x80);
+  return !!(GET_GPIO(COMMUNICATION_GPIO));
 }
 static void unio_inter_command_gap(void) {
   set_bus(1);
@@ -361,8 +367,8 @@ boolean NanodeUNIO::simple_write(const byte *buffer,word address,word length) {
 
 static void status(boolean r)
 {
-  if (r) Serial.println("(success)");
-  else Serial.println("(failure)");
+  if (r) Serial_println("(success)");
+  else Serial_println("(failure)");
 }
 
 static void dump_eeprom(word address,word length)
@@ -393,7 +399,7 @@ static void dump_eeprom(word address,word length)
       x++;
     }
     *x=0;
-    Serial.println(lbuf);
+    Serial_println(lbuf);
   }
 }
 
@@ -425,22 +431,22 @@ char bt[] = {0x5a,0x00};
 byte sr;
 NanodeUNIO unio(NANODE_MAC_DEVICE);
   
-void setup() {
+/*void setup() {
   pinMode(13, OUTPUT);
   Serial.begin(115200);
-}
+}*/
 
 void loop() {
   
   do {
     digitalWrite(led, LOW); 
-    Serial.println("Testing connection to Da Vinci EEPROM CHIP\n");    
+    Serial_println("Testing connection to Da Vinci EEPROM CHIP\n");    
     delay(100);
     digitalWrite(led, HIGH);
   } while(!unio.read_status(&sr));
   
-  Serial.println("Da Vinci EEPROM found...");
-  Serial.println("Reading the Davinci EEPROM Contents...");
+  Serial_println("Da Vinci EEPROM found...");
+  Serial_println("Reading the Davinci EEPROM Contents...");
   dump_eeprom(0,128);
   //dump_eeprom(116,4);
 	
@@ -451,7 +457,7 @@ void loop() {
   //Increment the serial number
   IncrementSerial(&buf[0], 0, 12);	
  
-  Serial.println("Updating EEPROM...");
+  Serial_println("Updating EEPROM...");
   status(unio.simple_write((const byte *)x,TOTALLEN,4));
   status(unio.simple_write((const byte *)x,NEWLEN,4));
   status(unio.simple_write((const byte *)et,HEADTEMP,2)); // extruder temp
@@ -468,7 +474,7 @@ void loop() {
   status(unio.simple_write((const byte *)buf,64 + SN,12)); //Serial Number
   status(unio.simple_write((const byte *)x,64 + LEN2,4));
 
-  Serial.println("Dumping Content after modification...");
+  Serial_println("Dumping Content after modification...");
   dump_eeprom(0,128);
  
   digitalWrite(led, HIGH);   // turn the LED on
