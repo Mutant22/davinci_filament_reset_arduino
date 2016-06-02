@@ -170,7 +170,14 @@ class NanodeUNIO {
 #define UNIO_INPUT() do { INP_GPIO(COMMUNICATION_GPIO); } while (0)
 
 static void set_bus(boolean state) {
-  SET_GPIO_ALT(COMMUNICATION_GPIO, (!!state));
+  if (state)
+  {
+  	GPIO_SET = (1 << COMMUNICATION_GPIO);
+  }
+  else
+  {
+  	GPIO_CLR = (1 << COMMUNICATION_GPIO);
+  }
 }
 
 static boolean read_bus(void) {
