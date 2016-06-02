@@ -99,8 +99,8 @@ void setup_io()
 #define digitalWrite(x, y)
 
 typedef bool boolean;
-typedef (unsigned char) byte;
-typedef (unsigned short) word;
+typedef unsigned char byte;
+typedef unsigned short word;
 
 //RPI macros and configuration - end
 
